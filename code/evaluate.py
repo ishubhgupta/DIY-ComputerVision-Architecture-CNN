@@ -25,6 +25,9 @@
         # Streamlit 1.36.0
 
 import torch
+# from sklearn.metrics import classification_report
+# from train import BirdClassificationCNN
+# from load import data_load
 
 def validate_model(model, val_loader):
     model.eval()
@@ -39,3 +42,25 @@ def validate_model(model, val_loader):
 
     accuracy = 100 * correct / total
     return f'Validation Accuracy: {accuracy}%'
+
+# def evaluate_model_with_report(data_entry):
+#     all_preds = []
+#     all_labels = []
+#     model = BirdClassificationCNN(num_classes=25)
+#     model.load_state_dict(torch.load('code/saved_model/bird_classification_cnn.pth'))
+#     model.eval()
+
+#     _, test_loader = data_load(data_entry)
+    
+#     with torch.no_grad():
+#         for images, labels in test_loader:
+#             outputs = model(images)
+#             _, predicted = torch.max(outputs, 1)
+            
+#             all_preds.extend(predicted.cpu().numpy())
+#             all_labels.extend(labels.cpu().numpy())
+    
+#     # Generate a classification report
+    
+#     report = classification_report(all_labels, all_preds, target_names=test_loader.classes)
+#     return report

@@ -29,6 +29,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
+from train import BirdClassificationCNN
 
 img_height, img_width = 150, 150  # Image dimensions
 # batch_size = 32
@@ -57,3 +58,10 @@ def data_load(data_dir):
     val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
 
     return train_loader, val_loader
+
+def load_model(model_path):
+    model = BirdClassificationCNN(num_classes=25)  
+    # Load the model's state dictionary
+    model.load_state_dict(torch.load(model_path))
+
+    return model
