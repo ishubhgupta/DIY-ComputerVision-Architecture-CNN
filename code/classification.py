@@ -23,11 +23,44 @@
     # Environment:     
         # Python 3.11.5
         # Streamlit 1.36.0
-
 import os
 import torch
+from torchvision import models, transforms
 from train import BirdClassificationCNN
 from ingest_transform import preprocess
+
+import torch
+from torchvision import models
+
+def load_model(model_choice):
+    if model_choice == "Self-trained CNN":
+        # Load self-trained CNN model
+        model = BirdClassificationCNN(num_classes=25)
+        model.load_state_dict(torch.load('code/saved_model/bird_classification_cnn.pth'))
+    elif model_choice == "Pretrained ResNet":
+        # Load a pretrained ResNet model
+        model = models.resnet18(pretrained=True)  # Use ResNet18 as an example
+        
+        # Adjust the final layer to match the number of classes
+        model.fc = torch.nn.Linear(model.fc.in_features, 25)
+
+        # Load the state dict, allowing for unexpected keys and size mismatches
+        pretrained_dict = torch.load('code/saved_model/pretrained_resnet.pth')
+
+        # Filter the state_dict for the ResNet model
+        model_dict = model.state_dict()
+
+        # Update the model's state_dict with the pretrained weights, allowing size mismatches
+        for key in pretrained_dict.keys():
+            if key in model_dict:
+                if pretrained_dict[key].size() == model_dict[key].size():
+                    model_dict[key] = pretrained_dict[key]
+
+        model.load_state_dict(model_dict)  # Load the updated state dict
+
+    model.eval()
+    return model
+
 
 def predict_image_class(model, img_tensor, class_labels):
     with torch.no_grad():
@@ -36,30 +69,16 @@ def predict_image_class(model, img_tensor, class_labels):
         predicted_class = class_labels[predicted.item()]
         return predicted_class
 
-def classify(image):
-    # Initialize the model first
-    model = BirdClassificationCNN(num_classes=25)  
-    # Load the model's state dictionary
-    model.load_state_dict(torch.load('code/saved_model/bird_classification_cnn.pth'))
-    model.eval()  # Set the model to evaluation mode
-    
-    # Preprocess the image
-    image_tensor = preprocess(image)  # No need for unsqueeze here, preprocess should return the right shape
-    
-    # Check shape for debugging
-    print(f'Image tensor shape: {image_tensor.shape}')  # This should be [3, 150, 150]
-    
-    # Add batch dimension
-    image_tensor = image_tensor.unsqueeze(0)  # Now shape should be [1, 3, 150, 150]
+def classify(image, model_choice):
+    model = load_model(model_choice)  # Load the selected model
 
-    with torch.no_grad():  # Disable gradient tracking for inference
-        output = model(image_tensor)  # Forward pass
-        _, predicted_idx = torch.max(output, 1)  # Get the index of the max log-probability
-    
-    data_dir = "data\Master"
-    # Map predicted index to class name (you need to define this mapping)
+    # Preprocess the image
+    image_tensor = preprocess(image)
+    image_tensor = image_tensor.unsqueeze(0)  # Add batch dimension
+
+    data_dir = "data/Master"
     class_names = [name for name in os.listdir(data_dir) if os.path.isdir(os.path.join(data_dir, name))]
 
-    # Get the predicted class name
-    predicted_class = class_names[predicted_idx.item()]  # Assuming class_names is defined
+    # Predict the class
+    predicted_class = predict_image_class(model, image_tensor, class_names)
     return predicted_class

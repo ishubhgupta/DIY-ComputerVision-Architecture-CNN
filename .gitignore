@@ -163,3 +163,4 @@ cython_debug/
 #.idea/
 
 sample_test.ipynb
+rupal.py

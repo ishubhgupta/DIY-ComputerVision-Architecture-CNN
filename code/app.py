@@ -43,7 +43,7 @@ st.set_page_config(page_title="Indian Bird Classification", page_icon=":cash:", 
 st.markdown("<h1 style='text-align: center; color: white;'>Indian Bird Classification</h1>", unsafe_allow_html=True)
 st.divider()
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Model Config", "Model Training", "Model Evaluation", "Model Prediction", "Model Flow"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Model Config", "Model Training", "Model Evaluation", "Model Prediction", "Model Flow", "About"])
 default_path = "data/Master"
 
 # App UI and functionality
@@ -53,7 +53,7 @@ with tab1:
     # Input field to take the directory path
     data_path = st.text_input("Enter the path to the folder containing images", value=default_path)
     # extraction_dir = data_path
-    
+    database_choice = st.selectbox("Select the database to store the data path:", ("PostgreSQL", "CouchDB"))
     if os.path.exists(data_path):
         # List all files in the directory and subdirectories
         file_list = [os.path.join(dp, f) for dp, dn, filenames in os.walk(data_path) for f in filenames]
@@ -66,7 +66,7 @@ with tab1:
         st.write(f"Images found in: {data_path}")
         
         # Database choice (dropdown instead of radio button)
-        database_choice = st.selectbox("Select the database to store the data path:", ("PostgreSQL", "CouchDB"))
+        
         
         # Store the data path based on user choice
         if st.button("Store Data Path"):
@@ -78,79 +78,120 @@ with tab1:
         st.write("The specified path does not exist. Please enter a valid path.")
 
 
+import streamlit as st
+from load_resnet import create_pretrained_resnet
+
 with tab2:
     st.subheader("Model Training")
     st.write("This is where you can train the model.")
     st.divider()
 
+    # Model training section
     model_name = 'CNN'
     st.markdown(f"<h3 style='text-align: center; color: white;'>{model_name}</h3>", unsafe_allow_html=True)
+    
+    # Input for the number of epochs
     epochs = st.number_input('Number of Epochs:', min_value=1, max_value=100, value=10, step=1)
-    # extraction_dir = data_path
-    if database_choice == "PostgreSQL":
-        extraction_dir = retrieve_data_path_from_postgresql()
-    elif database_choice == "CouchDB":
-        extraction_dir = retrieve_data_path_from_postgresql()
+
+    # Placeholder for database choice if needed
 
     if st.button(f"Train {model_name} Model", use_container_width=True):
         with st.status(f"Training {model_name} Model..."):
+            # Assume data_load and train_model are defined elsewhere in your code
+            extraction_dir = retrieve_data_path_from_postgresql() if database_choice == "PostgreSQL" else retrieve_data_path_from_couchdb()
             train_loader, val_loader = data_load(extraction_dir)
             model, training_report = train_model(train_loader, val_loader, epochs, database_choice)
             accuracy = validate_model(model, val_loader)
             for report in training_report:
                 st.write(f"Training complete! -> {report}")
 
-        st.success(f"{model_name} Trained Sucessully")
-
+        st.success(f"{model_name} Trained Successfully")
         st.write(f"Accuracy: {accuracy}")
 
+    st.divider()  # Divider between the sections
+
+    # Pretrained model section
+    st.subheader("Load Pretrained Model")
+    st.write("You can load a pretrained ResNet model below.")
     st.divider()
 
+    # Input for the number of classes
+    num_classes = st.number_input('Number of Classes for Pretrained Model:', min_value=1, max_value=100, value=25, step=1)
 
-    # with tab3:
-    #     st.subheader("Model Evaluation")
-    #     st.write("This is where you can see the current metrics of the latest saved model.")
-    #     st.divider()
-    #     st.markdown(f"<h3 style='text-align: center; color: white;'> Classification Report </h3>", unsafe_allow_html=True)
-    #     try:
-    #         # Loading model
-    #         model_path = r"code\saved_model\bird_classification_cnn.pth"
-    #         st.write(f"Loading model from {model_path}")  # Debug: Print the model path
-    #         model = load_model(model_path)
-    #         model.eval()
-    #         st.write("Model loaded successfully!")  # Debug: Confirm the model is loaded
+    if st.button("Load Pretrained ResNet Model", use_container_width=True):
+        with st.status("Loading pretrained model..."):
+            try:
+                # Call the function to create and save the pretrained model
+                model = create_pretrained_resnet(num_classes)
+                st.success("Pretrained ResNet model loaded successfully.")
+            except Exception as e:
+                st.error(f"Error loading model: {e}")
 
-    #         # Load the validation data
-    #         st.write("Loading validation data...")  # Debug: Add message before loading data
-    #         train_loader, val_loader = data_load(default_path)
-    #         st.write(f"Validation data loaded. Total batches: {len(val_loader)}")  # Debug: Confirm data loaded
+    st.divider()  # Optional: additional divider for clarity
 
-    #         # Validate the model
-    #         st.write("Validating model...")  # Debug: Add message before validation
-    #         cf = validate_model(model, val_loader)
-    #         st.text(cf)
 
-    #         st.divider()
-    #     except Exception as e:
-    #         st.error(f"An error occurred: {str(e)}")
 
-    with tab4:
+with tab3:
+    st.subheader("Model Evaluation")
+    st.write("This is where you can see the current metrics of the latest saved model.")
+    st.divider()
+    st.markdown(f"<h3 style='text-align: center; color: white;'> Classification Report </h3>", unsafe_allow_html=True)
+    try:
+        # Loading model
+        model_path = r"code\saved_model\bird_classification_cnn.pth"
+        st.write(f"Loading model from {model_path}")  # Debug: Print the model path
+        model = load_model(model_path)
+        model.eval()
+        st.write("Model loaded successfully!")  # Debug: Confirm the model is loaded
+
+        # Load the validation data
+        st.write("Loading validation data...")  # Debug: Add message before loading data
+        train_loader, val_loader = data_load(default_path)
+        st.write(f"Validation data loaded. Total batches: {len(val_loader)}")  # Debug: Confirm data loaded
+
+        # Validate the model
+        st.write("Validating model...")  # Debug: Add message before validation
+        cf = validate_model(model, val_loader)
+        st.text(cf)
+
+        st.divider()
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
+
+import streamlit as st
+from classification import classify
+from PIL import Image
+import os
+
+# Add model selection in Streamlit app
+
+import streamlit as st
+from classification import classify
+from PIL import Image
+
+# Sidebar for model selection
+
+    
+
+# Main tab content
+with tab4:
     # Image uploader with improved title and description
-        uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    st.write("Choose Model for Prediction:")
+    model_choice = st.selectbox("Model", ["Self-trained CNN", "Pretrained ResNet"])
+    if uploaded_file is not None:
+        # Open and display the uploaded image
+        image = Image.open(uploaded_file)
+        
+        # Display the predicted class based on the selected model
+        predicted_class = classify(uploaded_file, model_choice)
+        st.write(f"Predicted Class: {predicted_class}")
+        
+        # Show the image with an improved caption
+        st.image(image, caption="Uploaded Image", use_column_width=True)
+    else:
+        st.write("No image uploaded yet. Please upload an image to classify.")
 
-        if uploaded_file is not None:
-            # try:
-                # Open and display the uploaded image
-                image = Image.open(uploaded_file)
-                # Display the predicted class
-                predicted_class = classify(uploaded_file)
-                st.write(predicted_class)
-                # Show the image with an improved caption
-                st.image(image, caption="Uploaded Image", use_column_width=True)
-            # except Exception as e:
-            #     st.error(f"Error processing the image: {e}")
-        else:
-            st.write("No image uploaded yet. Please upload an image to classify.")
 
     with tab5:
         uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"], key="second")
@@ -196,6 +237,59 @@ with tab2:
         else:
             st.write("No image uploaded yet. Please upload an image to classify.")
 
+    with tab6:
+        st.title("About Indian Bird Classification")
+    
+        # Information about the website
+        st.markdown("""
+        ### Website Overview
+        The **Indian Bird Classification** platform is designed to classify bird species found in India using machine learning techniques. 
+        The website allows users to upload datasets, train models, evaluate their performance, and make predictions on bird species.
+        
+        The goal of this platform is to provide an easy-to-use interface for ornithologists, researchers, and hobbyists 
+        who are interested in identifying bird species using images.
+        """)
+        st.markdown("---")
 
+        # Basic knowledge about CNNs
+        st.header("What is a Convolutional Neural Network (CNN)?")
+        st.markdown("""
+        A **Convolutional Neural Network (CNN)** is a type of deep learning algorithm primarily used for image recognition 
+        and classification tasks. CNNs are designed to automatically and adaptively learn spatial hierarchies of features 
+        from input images.
+
+        CNNs consist of several layers:
+        - **Convolutional Layers:** Apply filters (kernels) to the input image to extract features like edges, textures, etc.
+        - **Pooling Layers:** Reduce the spatial dimensions (width, height) of the input to make computation more efficient.
+        - **Fully Connected Layers:** Connect all neurons from the previous layer to every neuron in the next layer, similar to traditional neural networks.
+        """)
+
+        # Use correct image path or URL
+        st.image(r"code\images\cover.png", caption="Basic CNN Architecture", use_column_width=True)
+
+        # Add interactivity with collapsible sections
+        with st.expander("Learn more about CNN Layers"):
+            st.markdown("""
+            - **Convolutional Layer:** This is the core building block of a CNN. It performs convolution operation on the input data with a kernel or filter. 
+            This layer helps in detecting features like edges, corners, and textures in images.
+            
+            - **Activation Function (ReLU):** After each convolution operation, an activation function (typically ReLU) is applied, introducing non-linearity into the model.
+            
+            - **Pooling Layer:** After the convolutional layer, pooling is applied to reduce the dimensions and extract dominant features. This helps in reducing the number of parameters and computation in the network.
+            
+            - **Fully Connected Layer:** In the final stages of CNN, the fully connected layer classifies the image into the target categories.
+            """)
+    
+        st.markdown("---")
+    
+        # Contact or additional resources
+        st.subheader("Further Reading")
+        st.markdown("""
+        If you are interested in learning more about CNNs or machine learning in general, here are a few useful resources:
+    
+        - [Deep Learning with Python by François Chollet](https://www.manning.com/books/deep-learning-with-python)
+        - [Stanford University's CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/)
+        - [Machine Learning on Coursera](https://www.coursera.org/learn/machine-learning)
+        """)
 
 
