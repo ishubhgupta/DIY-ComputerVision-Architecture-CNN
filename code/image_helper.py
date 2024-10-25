@@ -1,7 +1,6 @@
 # META DATA - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
     # Developer details: 
-        # Name: Akshat Rastogi, Shubh Gupta and Rupal Mishra
+        # Name: Akshat Rastogi, Rupal Mishra
         # Role: Developers
         # Code ownership rights: PreProd Corp
     # Version:
@@ -20,9 +19,9 @@
 # CODE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # Dependency: 
-    # Environment:     
-        # Python 3.11.5
-        # Streamlit 1.36.0
+# Environment:     
+# Python 3.11.5
+# Streamlit 1.36.0
 from PIL import Image
 import matplotlib.pyplot as plt
 import torch

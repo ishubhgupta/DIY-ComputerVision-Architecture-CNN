@@ -59,6 +59,9 @@ def preprocess(img_path):
     img = transform(img)
     return img
 
+import psycopg2
+import streamlit as st
+
 # PostgreSQL database connection function
 def connect_postgresql():
     """
@@ -88,21 +91,18 @@ def store_data_path_in_postgresql(data_path):
     
     Parameters:
     - data_path (str): The file path of the data to be stored.
-
-    This function establishes a connection to the 'indian_bird' database, creates the 'data_paths' 
-    table if it does not exist, and then inserts a new record containing the provided data path.
     """
     conn = connect_postgresql()
     if conn is not None:
         try:
-            conn.autocommit = True  # Automatically commit changes without explicit conn.commit()
+            conn.autocommit = True  
             cur = conn.cursor()  # Create a cursor for executing queries
             
             # Create the table if it doesn't exist already
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS data_paths (
-                    id SERIAL PRIMARY KEY,  # Unique ID that auto-increments for each entry
-                    path TEXT NOT NULL      # Column to store the data path, cannot be NULL
+                    id SERIAL PRIMARY KEY,  -- Unique ID that auto-increments for each entry
+                    path TEXT NOT NULL      -- Column to store the data path, cannot be NULL
                 )
             """)
             
@@ -115,7 +115,8 @@ def store_data_path_in_postgresql(data_path):
             st.write(f"Error storing data path in PostgreSQL: {e}")
         finally:
             # Always close the cursor and the connection, whether successful or not
-            cur.close()
+            if cur:
+                cur.close()
             conn.close()
 
 # Function to store a model path in the PostgreSQL database
@@ -125,9 +126,6 @@ def store_model_path_in_postgresql(model_path):
     
     Parameters:
     - model_path (str): The file path of the model to be stored.
-
-    This function connects to the 'indian_bird' database, creates the 'model_paths' table if it does not exist, 
-    and inserts a new entry with the given model path.
     """
     conn = connect_postgresql()
     if conn is not None:
@@ -138,8 +136,8 @@ def store_model_path_in_postgresql(model_path):
             # Create the 'model_paths' table if it doesn't already exist
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS model_paths (
-                    id SERIAL PRIMARY KEY,  # Unique identifier that increments automatically
-                    path TEXT NOT NULL      # Column to store the model path, cannot be NULL
+                    id SERIAL PRIMARY KEY,  -- Unique identifier that increments automatically
+                    path TEXT NOT NULL      -- Column to store the model path, cannot be NULL
                 )
             """)
             
@@ -152,7 +150,8 @@ def store_model_path_in_postgresql(model_path):
             st.write(f"Error storing model path in PostgreSQL: {e}")
         finally:
             # Always close the cursor and the connection after use
-            cur.close()
+            if cur:
+                cur.close()
             conn.close()
 
 # Function to retrieve the most recent data path stored in PostgreSQL
@@ -162,9 +161,6 @@ def retrieve_data_path_from_postgresql():
     
     Returns:
     - data_path (str or None): The most recent data path if available; None otherwise.
-
-    This function connects to the 'indian_bird' database, queries the 'data_paths' table to fetch 
-    the most recently stored data path by ordering entries in descending order based on their ID.
     """
     conn = connect_postgresql()
     if conn is not None:
@@ -190,5 +186,6 @@ def retrieve_data_path_from_postgresql():
             return None
         finally:
             # Close the cursor and connection to free up resources
-            cur.close()
+            if cur:
+                cur.close()
             conn.close()
