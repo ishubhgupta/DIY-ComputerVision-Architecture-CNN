@@ -32,7 +32,6 @@ from classification import classify
 from train import train_model
 from load import data_load
 from PIL import Image
-import joblib
 
 
 st.set_page_config(page_title="Indian Bird Classification", page_icon=":cash:", layout="centered")
@@ -89,34 +88,34 @@ with tab2:
     st.divider()
 
 import tensorflow as tf
-# with tab3:
-#     st.subheader("Model Evaluation")
-#     st.write("This is where you can see the current metrics of the latest saved model.")
-#     st.divider()
-#     st.markdown(f"<h3 style='text-align: center; color: white;'> Classification Report </h3>", unsafe_allow_html=True)
-#     import traceback
-#     try:
-#         # Loading model
-#         model_path = r"code\saved_model\bird_classification_cnn.h5"
-#         st.write(f"Loading model from {model_path}")  # Debug: Print the model path
-#         model = tf.keras.models.load_model(model_path)
-#         st.write("Model loaded successfully!")  # Debug: Confirm the model is loaded
+with tab3:
+    st.subheader("Model Evaluation")
+    st.write("This is where you can see the current metrics of the latest saved model.")
+    st.divider()
+    st.markdown(f"<h3 style='text-align: center; color: white;'> Classification Report </h3>", unsafe_allow_html=True)
+    import traceback
+    try:
+        # Loading model
+        model_path = r"code\saved_model\bird_classification_cnn.h5"
+        st.write(f"Loading model from {model_path}")  # Debug: Print the model path
+        model = tf.keras.models.load_model(model_path)
+        st.write("Model loaded successfully!")  # Debug: Confirm the model is loaded
 
-#         # Load the validation data
-#         st.write("Loading validation data...")  # Debug: Add message before loading data
-#         train_loader, val_loader = data_load(extraction_dir)
-#         st.write(f"Validation data loaded. Total batches: {len(val_loader)}")  # Debug: Confirm data loaded
+        # Load the validation data
+        st.write("Loading validation data...")  # Debug: Add message before loading data
+        train_loader, val_loader = data_load(extraction_dir)
+        st.write(f"Validation data loaded. Total batches: {len(val_loader)}")  # Debug: Confirm data loaded
 
-#         # Validate the model
-#         st.write("Validating model...")  # Debug: Add message before validation
-#         cf = validate_model(model, val_loader)
-#         st.text(cf)
+        # Validate the model
+        st.write("Validating model...")  # Debug: Add message before validation
+        cf = validate_model(model, val_loader)
+        st.text(cf)
 
-#         st.divider()
-#     except Exception as e:
-#         st.error(f"An error occurred: {str(e)}")  # Basic error message
-#         # Print full traceback for detailed debugging
-#         st.error(traceback.format_exc())
+        st.divider()
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")  # Basic error message
+        # Print full traceback for detailed debugging
+        st.error(traceback.format_exc())
 
 
 with tab4:
