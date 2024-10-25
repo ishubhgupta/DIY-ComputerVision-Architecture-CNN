@@ -29,6 +29,8 @@ import torch.nn as nn
 import torch.optim as optim
 from evaluate import validate_model  # Assuming this is your evaluation function
 import os
+from ingest_transform import store_model_path_in_postgresql
+from ingest_transform_couchdb import store_model_path_in_couchdb
 
 img_height, img_width = 150, 150  # Image dimensions
 
@@ -65,7 +67,7 @@ class BirdClassificationCNN(nn.Module):
         
         return x
 
-def train_model(train_loader, val_loader, epochs):
+def train_model(train_loader, val_loader, epochs, database_choice):
     model = BirdClassificationCNN(num_classes=25)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -93,6 +95,10 @@ def train_model(train_loader, val_loader, epochs):
     # Save the trained model
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     torch.save(model.state_dict(), save_path)
+    if database_choice == "PostgreSQL":
+        store_model_path_in_postgresql(save_path)
+    elif database_choice == "CouchDB":
+        store_model_path_in_couchdb(save_path)
     print(f'Model saved at {save_path}')
 
     return model, training_report

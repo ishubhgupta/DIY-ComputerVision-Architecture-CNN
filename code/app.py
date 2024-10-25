@@ -35,6 +35,8 @@ from image_helper import normalize, resize, to_rgb, to_tensor
 from train import BirdClassificationCNN, train_model
 from load import data_load, load_model
 from PIL import Image
+from ingest_transform import store_data_path_in_postgresql , retrieve_data_path_from_postgresql
+from ingest_transform_couchdb import store_data_path_in_couchdb , retrieve_data_path_from_couchdb
 
 
 st.set_page_config(page_title="Indian Bird Classification", page_icon=":cash:", layout="centered")
@@ -44,10 +46,14 @@ st.divider()
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Model Config", "Model Training", "Model Evaluation", "Model Prediction", "Model Flow"])
 default_path = "data/Master"
 
+# App UI and functionality
 with tab1:
+    st.title("Image Folder Path Storage")
+    
     # Input field to take the directory path
     data_path = st.text_input("Enter the path to the folder containing images", value=default_path)
-    extraction_dir = data_path
+    # extraction_dir = data_path
+    
     if os.path.exists(data_path):
         # List all files in the directory and subdirectories
         file_list = [os.path.join(dp, f) for dp, dn, filenames in os.walk(data_path) for f in filenames]
@@ -58,6 +64,16 @@ with tab1:
         # Display the total number of images found
         st.write(f"Number of images found: {image_count}")
         st.write(f"Images found in: {data_path}")
+        
+        # Database choice (dropdown instead of radio button)
+        database_choice = st.selectbox("Select the database to store the data path:", ("PostgreSQL", "CouchDB"))
+        
+        # Store the data path based on user choice
+        if st.button("Store Data Path"):
+            if database_choice == "PostgreSQL":
+                store_data_path_in_postgresql(data_path)
+            elif database_choice == "CouchDB":
+                store_data_path_in_couchdb(data_path)
     else:
         st.write("The specified path does not exist. Please enter a valid path.")
 
@@ -70,11 +86,16 @@ with tab2:
     model_name = 'CNN'
     st.markdown(f"<h3 style='text-align: center; color: white;'>{model_name}</h3>", unsafe_allow_html=True)
     epochs = st.number_input('Number of Epochs:', min_value=1, max_value=100, value=10, step=1)
+    # extraction_dir = data_path
+    if database_choice == "PostgreSQL":
+        extraction_dir = retrieve_data_path_from_postgresql()
+    elif database_choice == "CouchDB":
+        extraction_dir = retrieve_data_path_from_postgresql()
 
     if st.button(f"Train {model_name} Model", use_container_width=True):
         with st.status(f"Training {model_name} Model..."):
             train_loader, val_loader = data_load(extraction_dir)
-            model, training_report = train_model(train_loader, val_loader, epochs)
+            model, training_report = train_model(train_loader, val_loader, epochs, database_choice)
             accuracy = validate_model(model, val_loader)
             for report in training_report:
                 st.write(f"Training complete! -> {report}")
@@ -86,32 +107,32 @@ with tab2:
     st.divider()
 
 
-    with tab3:
-        st.subheader("Model Evaluation")
-        st.write("This is where you can see the current metrics of the latest saved model.")
-        st.divider()
-        st.markdown(f"<h3 style='text-align: center; color: white;'> Classification Report </h3>", unsafe_allow_html=True)
-        try:
-            # Loading model
-            model_path = r"code\saved_model\bird_classification_cnn.pth"
-            st.write(f"Loading model from {model_path}")  # Debug: Print the model path
-            model = load_model(model_path)
-            model.eval()
-            st.write("Model loaded successfully!")  # Debug: Confirm the model is loaded
+    # with tab3:
+    #     st.subheader("Model Evaluation")
+    #     st.write("This is where you can see the current metrics of the latest saved model.")
+    #     st.divider()
+    #     st.markdown(f"<h3 style='text-align: center; color: white;'> Classification Report </h3>", unsafe_allow_html=True)
+    #     try:
+    #         # Loading model
+    #         model_path = r"code\saved_model\bird_classification_cnn.pth"
+    #         st.write(f"Loading model from {model_path}")  # Debug: Print the model path
+    #         model = load_model(model_path)
+    #         model.eval()
+    #         st.write("Model loaded successfully!")  # Debug: Confirm the model is loaded
 
-            # Load the validation data
-            st.write("Loading validation data...")  # Debug: Add message before loading data
-            train_loader, val_loader = data_load(default_path)
-            st.write(f"Validation data loaded. Total batches: {len(val_loader)}")  # Debug: Confirm data loaded
+    #         # Load the validation data
+    #         st.write("Loading validation data...")  # Debug: Add message before loading data
+    #         train_loader, val_loader = data_load(default_path)
+    #         st.write(f"Validation data loaded. Total batches: {len(val_loader)}")  # Debug: Confirm data loaded
 
-            # Validate the model
-            st.write("Validating model...")  # Debug: Add message before validation
-            cf = validate_model(model, val_loader)
-            st.text(cf)
+    #         # Validate the model
+    #         st.write("Validating model...")  # Debug: Add message before validation
+    #         cf = validate_model(model, val_loader)
+    #         st.text(cf)
 
-            st.divider()
-        except Exception as e:
-            st.error(f"An error occurred: {str(e)}")
+    #         st.divider()
+    #     except Exception as e:
+    #         st.error(f"An error occurred: {str(e)}")
 
     with tab4:
     # Image uploader with improved title and description
