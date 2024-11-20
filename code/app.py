@@ -37,14 +37,14 @@ st.divider()  # Adding a horizontal divider
 
 # Creating tabs for different functionalities of the app
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Model Config", "Model Training", "Model Evaluation", "Model Prediction", "Model Flow", "About"])  
-default_path = "data/Master"  # Default path for images
+
 
 # First tab: Image Folder Path Storage
 with tab1:
     st.title("Image Folder Path Storage")  # Title for the first tab
 
     # Input field to take the directory path for image storage
-    data_path = st.text_input("Enter the path to the folder containing images", value=default_path)  # User input for directory
+    data_path = st.text_input("Enter the path to the folder containing images")  # User input for directory
     # Dropdown to select the database for storing the data path
     database_choice = st.selectbox("Select the database to store the data path:", ("PostgreSQL", "CouchDB"))  
 
@@ -170,7 +170,7 @@ with tab3:
 
         # Load the validation data for evaluation
         st.write("Loading validation data...")  # Debug message: Informing that validation data is being loaded
-        train_loader, val_loader = data_load(default_path)  # Load the data, assuming it returns loaders for training and validation
+        train_loader, val_loader = data_load(data_path)  # Load the data, assuming it returns loaders for training and validation
         
         # Confirm the number of batches in the validation dataset
         st.write(f"Validation data loaded. Total batches: {len(val_loader)}")  # Debug message: Confirm data loaded
