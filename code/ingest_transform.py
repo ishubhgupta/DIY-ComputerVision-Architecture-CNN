@@ -10,7 +10,7 @@
             # Unit test: Pass
             # Integration test: Pass
      
-    # Description: This Streamlit app allows users to input features and make predictions using Unsupervised Learning.
+    # Description: This Streamlit app allows users to input bird image and classify its name using CNN.
         # CouchDB: Yes
         # Postgres: Yes
 
