@@ -1,28 +1,23 @@
 # META DATA - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-    # Developer details: 
-        # Name: Akshat Rastogi, Shubh Gupta and Rupal Mishra
-        # Role: Developers
-        # Code ownership rights: PreProd Corp
-    # Version:
-        # Version: V 1.1 (25 September 2024)
-            # Developers: Akshat Rastogi, Shubh Gupta and Rupal Mishra
-            # Unit test: Pass
-            # Integration test: Pass
-     
-    # Description: This Streamlit app allows users to input features and make predictions using Unsupervised Learning.
-        # Postgres: Yes
-        # MQs: No
-        # Cloud: No
-        # Data versioning: No
-        # Data masking: No
+# Developer details: 
+# Name: Akshat Rastogi, Shubh Gupta and Rupal Mishra
+# Role: Developers
+# Code ownership rights: PreProd Corp
+
+# Description: This Streamlit app allows users to input features and make predictions using Neural Network.
+# MQs: No
+# Cloud: No
+# Data versioning: No
+# Data masking: No
 
 # CODE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # Dependency: 
-    # Environment:     
-        # Python 3.11.5
-        # Streamlit 1.36.0
+# Environment:     
+# Python 3.10.11
+# streamlit 1.40.0
+
 # Importing necessary libraries for the application
 import os  # To interact with the operating system for file path management
 import streamlit as st  # Streamlit for building the web app
@@ -213,7 +208,7 @@ with tab4:
         st.write(f"Predicted Class: {predicted_class}")  # Display the predicted class to the user
         
         # Show the uploaded image with an improved caption
-        st.image(image, caption="Uploaded Image", use_column_width=True)  # Display the image with a caption and responsive width
+        st.image(image, caption="Uploaded Image", use_container_width=True)  # Display the image with a caption and responsive width
     else:
         # If no image has been uploaded, prompt the user
         st.write("No image uploaded yet. Please upload an image to classify.")  # Message to guide the user to upload an image
@@ -229,7 +224,7 @@ with tab5:
         image = Image.open(uploaded_file)
         
         # Display the uploaded image
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
         st.divider()
 
         # Section for image resizing
@@ -301,7 +296,7 @@ with tab6:
     """)
 
     # Display basic CNN architecture image
-    st.image(r"code\images\cover.png", caption="Basic CNN Architecture", use_column_width=True)
+    st.image(r"code\images\cover.png", caption="Basic CNN Architecture", use_container_width=True)
 
     # Expandable section for more information about CNN layers
     with st.expander("Learn more about CNN Layers"):
