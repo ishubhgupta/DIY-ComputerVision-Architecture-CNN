@@ -6,7 +6,7 @@ This is the **Indian Bird Classification** branch.
 
 ### Business Case
 
-Birdwatching is a popular hobby in India, with a growing community of enthusiasts, researchers, and environmentalists. Identifying bird species in the field is essential for both casual birdwatchers and serious ornithologists. However, with the immense diversity of bird species in India—over 1,300 recognized species—accurate identification can be challenging, especially for beginners who may not have immediate access to reference materials. 
+Birdwatching is a popular hobby in India, with a growing community of enthusiasts, researchers, and environmentalists. Identifying bird species in the field is essential for both casual birdwatchers and serious ornithologists. However, with the immense diversity of bird species in India—over 1,300 recognized species—accurate identification can be challenging, especially for beginners who may not have immediate access to reference materials.
 
 The aim of this project is to develop a deep learning model that can accurately classify bird species from images, allowing birdwatchers to enhance their experience, engage more deeply with their hobby, and contribute to citizen science initiatives. By making bird identification more accessible, we can foster a greater appreciation for biodiversity and conservation efforts.
 
@@ -23,12 +23,14 @@ To address this issue, there is a need for a user-friendly solution that utilize
 ### Objective
 
 The aim is to build a predictive model that can accurately classify bird species based on images of their physical characteristics. The model will focus on features such as:
+
 - Color patterns
 - Size and shape of the bird
 - Unique markings or features
 - Habitat and behavior indicators
 
 By employing this classification model, birdwatchers can:
+
 - Quickly identify birds in their natural habitat
 - Enhance their birdwatching experience
 - Contribute to citizen science and conservation efforts by accurately reporting sightings
@@ -57,11 +59,14 @@ code/
 .gitignore                          (specifies files and directories to be ignored by Git)
 readme.md                           (documentation for the project)
 requirements.txt                   (lists the dependencies required for the project)
+```
 
+---
 
 ## Data Definition
 
 The dataset contains features related to various bird species, including:
+
 - **Species Information**: Common name and scientific name of the bird species.
 - **Physical Characteristics**: Features like color patterns, size, shape, and unique markings.
 - **Habitat Information**: Common habitats where the bird species are found.
@@ -69,15 +74,13 @@ The dataset contains features related to various bird species, including:
 - **Image Data**: Images of the bird species for classification.
 
 **Training and Testing Data:**
+
 - **Training Samples:** Approximately 10,000 images across various bird species.
 - **Testing Samples:** Approximately 2,000 images for evaluation purposes.
-```
----
 
 ## Program Flow
 
 1. **Data Ingestion:** Load bird images and their corresponding metadata from the `Data` directory (e.g., image files and CSV containing species information) and ingest it into a suitable format for processing. [`ingest_transform.py`]
-   
 2. **Data Transformation:** Preprocess the images and metadata, including resizing images, normalizing pixel values, and augmenting data to improve model robustness. The data is then split into training and validation sets. [`ingest_transform.py`]
 
 3. **Model Training:** Train a deep learning model (e.g., using TensorFlow or PyTorch) to classify bird species based on image data. This includes techniques like transfer learning with pre-trained models for improved accuracy. [`train.py`]
@@ -90,8 +93,58 @@ The dataset contains features related to various bird species, including:
 
 ---
 
+## Database Setup
+
+### PostgreSQL Setup
+
+1. Download and install PostgreSQL from [official website](https://www.postgresql.org/download/)
+2. During installation, set the following default credentials:
+   - Username: postgres
+   - Password: 123456
+   - Port: 5432
+3. Create a new database named 'indian_bird'
+   ```sql
+   CREATE DATABASE indian_bird;
+   ```
+4. The application will automatically create required tables during runtime.
+
+### CouchDB Setup
+
+1. Download and install Apache CouchDB from [official website](https://couchdb.apache.org/#download)
+2. During installation, set the following default credentials:
+   - Username: admin
+   - Password: 123456
+   - Port: 5984
+3. Access the CouchDB dashboard at http://localhost:5984/\_utils
+4. The application will automatically create required databases during runtime.
+
+### Verifying Database Connection
+
+1. For PostgreSQL:
+   ```bash
+   psql -U postgres -d indian_bird
+   ```
+2. For CouchDB:
+   - Open browser and navigate to http://localhost:5984/\_utils
+   - Log in with admin credentials
+
 ## Steps to Run
 
-1. Install the necessary packages: `pip install -r requirements.txt`
-2. Run `app.py` to launch the Streamlit web application and utilize the GUI for bird classification.
+1. **Dataset Setup:**
 
+   - Download the dataset from [Indian Birds Dataset on Kaggle](https://www.kaggle.com/datasets/ichhadhari/indian-birds)
+   - Place the downloaded images in `Data/Master/Dataset` directory
+
+   > **Note:** The original dataset contains over 39,000 images (18.4 GB). For learning and development purposes, we recommend using a smaller subset (around 500-1000 images) initially. This will allow faster training and iteration while developing the model. The full dataset can be used once the pipeline is established.
+
+2. **Database Setup:**
+
+   - Follow the database setup instructions in the section above to configure PostgreSQL and CouchDB
+
+3. **Environment Setup:**
+
+   - Install the necessary packages: `pip install -r requirements.txt`
+
+4. **Run Application:**
+   - Run `streamlit run code/app.py` to launch the Streamlit web application
+   - Use the GUI to train models and classify bird images
