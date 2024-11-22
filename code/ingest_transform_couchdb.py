@@ -10,16 +10,19 @@
             # Unit test: Pass
             # Integration test: Pass
      
-    # Description: This Streamlit app allows users to input bird image and classify its name using CNN.
-        # CouchDB: Yes
-        # Postgres: Yes
+    # Description: Handles CouchDB database operations for storing and retrieving data paths.
+    # Features:
+        # - CouchDB database connection and operations
+        # - Data path storage and retrieval
+        # Database Integration:
+            # CouchDB: Yes
 
 # CODE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # Dependency: 
     # Environment:     
-        # Python 3.10.11
-        # Streamlit 1.40.0
+        # couchdb 1.2
+        # streamlit 1.40.0
 
 import couchdb
 import streamlit as st

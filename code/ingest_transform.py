@@ -10,16 +10,23 @@
             # Unit test: Pass
             # Integration test: Pass
      
-    # Description: This Streamlit app allows users to input bird image and classify its name using CNN.
-        # CouchDB: Yes
-        # Postgres: Yes
+    # Description: Handles PostgreSQL database operations and image preprocessing.
+    # Features:
+        # - PostgreSQL database connection and operations
+        # - Image preprocessing pipeline
+        # - Data path storage and retrieval
+        # Database Integration:
+            # Postgres: Yes
 
 # CODE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # Dependency: 
     # Environment:     
-        # Python 3.10.11
-        # Streamlit 1.40.0
+        # psycopg2 2.9.9
+        # streamlit 1.40.0
+        # pillow 10.0.0
+        # torch 2.5.0
+        # torchvision 0.20.0
 
 # Import necessary libraries
 import torch  # PyTorch for model handling

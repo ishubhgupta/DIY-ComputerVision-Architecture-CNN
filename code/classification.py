@@ -1,5 +1,4 @@
 # META DATA - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
     # Developer details: 
         # Name: Akshat Rastogi and Rupal Mishra
         # Role: Developers
@@ -10,16 +9,20 @@
             # Unit test: Pass
             # Integration test: Pass
      
-    # Description: This Streamlit app allows users to input bird image and classify its name using CNN.
-        # CouchDB: Yes
-        # Postgres: Yes
+    # Description: Implements the prediction pipeline for bird classification.
+    # Features:
+        # - Model loading (both custom CNN and ResNet)
+        # - Image classification
+        # - Prediction handling
+
 
 # CODE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # Dependency: 
     # Environment:     
-        # Python 3.10.11
-        # Streamlit 1.40.0
+        # torch 2.5.0
+        # torchvision 0.20.0
+        # pillow 10.0.0
 
 import os
 import torch

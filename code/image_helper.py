@@ -10,16 +10,22 @@
             # Unit test: Pass
             # Integration test: Pass
      
-    # Description: This Streamlit app allows users to input bird image and classify its name using CNN.
-        # CouchDB: Yes
-        # Postgres: Yes
+    # Description: Provides utility functions for image processing and transformation.
+    # Features:
+        # - Image resizing
+        # - RGB conversion
+        # - Tensor conversion
+        # - Image normalization
 
 # CODE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # Dependency: 
     # Environment:     
-        # Python 3.10.11
-        # Streamlit 1.40.0
+        # pillow 10.0.0
+        # torch 2.5.0
+        # torchvision 0.20.0
+        # matplotlib 3.6.0
+
 
 from PIL import Image
 import matplotlib.pyplot as plt
