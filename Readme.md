@@ -141,13 +141,13 @@ The dataset contains features related to various bird species, including:
    - Open http://localhost:5984/_utils
    - Click "Setup" and create admin account:
      - Username: admin
-     - Password: 123456
+     - Password: your-password
 
 #### Windows
 1. Download and install Apache CouchDB from [official website](https://couchdb.apache.org/#download)
 2. During installation, set:
    - Username: admin
-   - Password: 123456
+   - Password: your-password
    - Port: 5984
 
 ### Verifying Database Connection
@@ -167,7 +167,6 @@ The dataset contains features related to various bird species, including:
 
 1. **Dataset Setup:**
    - Download the dataset from [Indian Birds Dataset on Kaggle](https://www.kaggle.com/datasets/ichhadhari/indian-birds)
-   - Extract to a known location (e.g., `/Users/username/Downloads/indian_birds` on Mac or `D:\datasets\indian_birds` on Windows)
    - For testing, start with a small subset (~500 images)
 
 2. **Environment Setup:**
