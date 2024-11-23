@@ -97,54 +97,107 @@ The dataset contains features related to various bird species, including:
 
 ### PostgreSQL Setup
 
+#### MacOS
+1. Install PostgreSQL using Homebrew:
+   ```bash
+   brew install postgresql@15
+   ```
+2. Start PostgreSQL service:
+   ```bash
+   brew services start postgresql@15
+   ```
+3. Create database and set credentials:
+   ```bash
+   psql postgres
+   CREATE ROLE postgres WITH LOGIN PASSWORD '123456';
+   ALTER ROLE postgres CREATEDB;
+   CREATE DATABASE indian_bird;
+   \q
+   ```
+
+#### Windows
 1. Download and install PostgreSQL from [official website](https://www.postgresql.org/download/)
-2. During installation, set the following default credentials:
+2. During installation, set:
    - Username: postgres
    - Password: 123456
    - Port: 5432
-3. Create a new database named 'indian_bird'
+3. Create database:
    ```sql
    CREATE DATABASE indian_bird;
    ```
-4. The application will automatically create required tables during runtime.
 
 ### CouchDB Setup
 
+#### MacOS
+1. Install CouchDB using Homebrew:
+   ```bash
+   brew install couchdb
+   ```
+2. Start CouchDB service:
+   ```bash
+   brew services start couchdb
+   ```
+3. Set admin credentials:
+   - Open http://localhost:5984/_utils
+   - Click "Setup" and create admin account:
+     - Username: admin
+     - Password: 123456
+
+#### Windows
 1. Download and install Apache CouchDB from [official website](https://couchdb.apache.org/#download)
-2. During installation, set the following default credentials:
+2. During installation, set:
    - Username: admin
    - Password: 123456
    - Port: 5984
-3. Access the CouchDB dashboard at http://localhost:5984/\_utils
-4. The application will automatically create required databases during runtime.
 
 ### Verifying Database Connection
 
-1. For PostgreSQL:
+1. PostgreSQL:
    ```bash
+   # MacOS
+   psql -d indian_bird -U postgres
+   # Windows
    psql -U postgres -d indian_bird
    ```
-2. For CouchDB:
-   - Open browser and navigate to http://localhost:5984/\_utils
+2. CouchDB:
+   - Open http://localhost:5984/_utils
    - Log in with admin credentials
 
 ## Steps to Run
 
 1. **Dataset Setup:**
-
    - Download the dataset from [Indian Birds Dataset on Kaggle](https://www.kaggle.com/datasets/ichhadhari/indian-birds)
-   - Place the downloaded images in `Data/Master/Dataset` directory
+   - Extract to a known location (e.g., `/Users/username/Downloads/indian_birds` on Mac or `D:\datasets\indian_birds` on Windows)
+   - For testing, start with a small subset (~500 images)
 
-   > **Note:** The original dataset contains over 39,000 images (18.4 GB). For learning and development purposes, we recommend using a smaller subset (around 500-1000 images) initially. This will allow faster training and iteration while developing the model. The full dataset can be used once the pipeline is established.
+2. **Environment Setup:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-2. **Database Setup:**
+3. **Launch Application:**
+   ```bash
+   streamlit run code/app.py
+   ```
 
-   - Follow the database setup instructions in the section above to configure PostgreSQL and CouchDB
+4. **Using the Application:**
+   a. Model Configuration (Tab 1):
+      - Enter dataset path in "Image Folder Path" field
+        - Example- `Data/Master/Dataset`
+      - Select database (PostgreSQL or CouchDB)
+      - Click "Store Data Path"
 
-3. **Environment Setup:**
+   b. Model Training (Tab 2):
+      - Set number of epochs (recommended: start with 5-10)
+      - Click "Train CNN Model" or "Load Pretrained ResNet Model"
+      - Wait for training completion message
 
-   - Install the necessary packages: `pip install -r requirements.txt`
+   c. Model Evaluation (Tab 3):
+      - View model metrics and performance statistics
 
-4. **Run Application:**
-   - Run `streamlit run code/app.py` to launch the Streamlit web application
-   - Use the GUI to train models and classify bird images
+   d. Model Prediction (Tab 4):
+      - Upload an image of an Indian bird
+      - Select model type (Self-trained CNN or Pretrained ResNet)
+      - View prediction results
+
+Note: For initial testing, we recommend using a small subset of images and the pretrained ResNet model, which typically provides better results with less training time.
