@@ -113,7 +113,7 @@ The dataset contains features related to various bird species, including:
    a. Model Configuration (Tab 1):
       - Enter dataset path in "Image Folder Path" field
         - Example- `Data/Master/Dataset`
-      - Select database (PostgreSQL or CouchDB)
+
       - Click "Store Data Path"
 
    b. Model Training (Tab 2):
