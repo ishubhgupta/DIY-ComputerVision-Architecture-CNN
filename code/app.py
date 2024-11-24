@@ -41,8 +41,6 @@ from image_helper import normalize, resize, to_rgb, to_tensor  # Importing image
 from train import BirdClassificationCNN, train_model  # Importing model architecture and training function
 from load import data_load, load_model  # Importing data loading and model loading functions
 from PIL import Image  # PIL for image processing functionalities
-from ingest_transform import store_data_path_in_postgresql, retrieve_data_path_from_postgresql  # PostgreSQL data handling
-from ingest_transform_couchdb import store_data_path_in_couchdb, retrieve_data_path_from_couchdb  # CouchDB data handling
 
 # Configuring the Streamlit app's page
 st.set_page_config(page_title="Indian Bird Classification", page_icon=":cash:", layout="centered")  # Setting title, icon, and layout
@@ -55,35 +53,22 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Model Config", "Model Training", 
 
 # First tab: Image Folder Path Storage
 with tab1:
-    st.title("Image Folder Path Storage")  # Title for the first tab
+    st.title("Image Folder Path Configuration")
 
-    # Input field to take the directory path for image storage
-    data_path = st.text_input("Enter the path to the folder containing images")  # User input for directory
-    # Dropdown to select the database for storing the data path
-    database_choice = st.selectbox("Select the database to store the data path:", ("PostgreSQL", "CouchDB"))  
+    # Input field for image directory path
+    data_path = st.text_input("Enter the path to the folder containing images")
 
-    # Check if the provided path exists
     if os.path.exists(data_path):
-        # List all files in the specified directory and subdirectories
         file_list = [os.path.join(dp, f) for dp, dn, filenames in os.walk(data_path) for f in filenames]
-        
-        # Count the number of image files (with .jpeg and .jpg extensions)
         image_count = sum(1 for file_name in file_list if file_name.lower().endswith(('.jpeg', '.jpg')))
         
-        # Display the total number of images found
-        st.write(f"Number of images found: {image_count}")  # Displaying count
-        st.write(f"Images found in: {data_path}")  # Displaying the path where images were found
+        st.write(f"Number of images found: {image_count}")
+        st.write(f"Images found in: {data_path}")
         
-        # Button to store the data path in the selected database
-        if st.button("Store Data Path"):
-            # Based on user's choice, store data path in the respective database
-            if database_choice == "PostgreSQL":
-                store_data_path_in_postgresql(data_path)  # Function to store path in PostgreSQL
-            elif database_choice == "CouchDB":
-                store_data_path_in_couchdb(data_path)  # Function to store path in CouchDB
+        if st.button("Confirm Path"):
+            st.success("Path configuration saved successfully!")
     else:
-        # Message if the specified path does not exist
-        st.write("The specified path does not exist. Please enter a valid path.")  # Alert for invalid path
+        st.write("The specified path does not exist. Please enter a valid path.")
 
 
 # Importing additional functionalities related to ResNet
@@ -114,13 +99,10 @@ with tab2:
         with st.status(f"Training {model_name} Model..."):
             # Retrieving the extraction directory based on the selected database
             # Use PostgreSQL or CouchDB to retrieve the path where images are stored
-            extraction_dir = retrieve_data_path_from_postgresql() if database_choice == "PostgreSQL" else retrieve_data_path_from_couchdb()
-            
-            # Loading the training and validation data using the data_load function
-            train_loader, val_loader = data_load(extraction_dir)
+            train_loader, val_loader = data_load(data_path)
             
             # Training the model with the loaded data, number of epochs, and database choice
-            model, training_report = train_model(train_loader, val_loader, epochs, database_choice)
+            model, training_report = train_model(train_loader, val_loader, epochs)
             
             # Validating the model's performance on the validation dataset
             accuracy = validate_model(model, val_loader)

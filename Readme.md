@@ -48,7 +48,6 @@ code/
 │   ├── app.py                     (main application file for the Streamlit web app)
 │   ├── classification.py          (script for classification-related functions and utilities)
 │   ├── evaluate.py                (script to evaluate model performance on test data)
-│   ├── ingest_transform_couchdb.py (script for ingesting and transforming data into CouchDB)
 │   ├── ingest_transform.py        (script for general data ingestion and transformation)
 │   ├── load.py                    (script for loading and preprocessing data)
 │   └── train.py                   (script for training the classification model)
@@ -93,75 +92,6 @@ The dataset contains features related to various bird species, including:
 
 ---
 
-## Database Setup
-
-### PostgreSQL Setup
-
-#### MacOS
-1. Install PostgreSQL using Homebrew:
-   ```bash
-   brew install postgresql@15
-   ```
-2. Start PostgreSQL service:
-   ```bash
-   brew services start postgresql@15
-   ```
-3. Create database and set credentials:
-   ```bash
-   psql postgres
-   CREATE ROLE postgres WITH LOGIN PASSWORD '123456';
-   ALTER ROLE postgres CREATEDB;
-   CREATE DATABASE indian_bird;
-   \q
-   ```
-
-#### Windows
-1. Download and install PostgreSQL from [official website](https://www.postgresql.org/download/)
-2. During installation, set:
-   - Username: postgres
-   - Password: 123456
-   - Port: 5432
-3. Create database:
-   ```sql
-   CREATE DATABASE indian_bird;
-   ```
-
-### CouchDB Setup
-
-#### MacOS
-1. Install CouchDB using Homebrew:
-   ```bash
-   brew install couchdb
-   ```
-2. Start CouchDB service:
-   ```bash
-   brew services start couchdb
-   ```
-3. Set admin credentials:
-   - Open http://localhost:5984/_utils
-   - Click "Setup" and create admin account:
-     - Username: admin
-     - Password: your-password
-
-#### Windows
-1. Download and install Apache CouchDB from [official website](https://couchdb.apache.org/#download)
-2. During installation, set:
-   - Username: admin
-   - Password: your-password
-   - Port: 5984
-
-### Verifying Database Connection
-
-1. PostgreSQL:
-   ```bash
-   # MacOS
-   psql -d indian_bird -U postgres
-   # Windows
-   psql -U postgres -d indian_bird
-   ```
-2. CouchDB:
-   - Open http://localhost:5984/_utils
-   - Log in with admin credentials
 
 ## Steps to Run
 

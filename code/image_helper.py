@@ -22,14 +22,12 @@
 # Dependency: 
     # Environment:     
         # pillow 10.0.0
-        # torch 2.5.0
         # torchvision 0.20.0
         # matplotlib 3.6.0
 
 
 from PIL import Image
 import matplotlib.pyplot as plt
-import torch
 from torchvision import transforms
 
 # Function to resize an image to a specified size, here (150, 150)

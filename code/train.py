@@ -1,4 +1,4 @@
-# META DATA - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# META DATA - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
     # Developer details: 
         # Name: Akshat Rastogi, Shubh Gupta and Rupal Mishra
@@ -15,9 +15,7 @@
         # - Custom CNN architecture definition
         # - Model training loop implementation
         # - Model saving functionality
-        # Database Integration:
-            # CouchDB: Yes (model path storage)
-            # Postgres: Yes (model path storage)
+
 
 # CODE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -32,8 +30,6 @@ import torch.nn as nn  # PyTorch module for neural network layers
 import torch.optim as optim  # Module for optimization algorithms
 from evaluate import validate_model  # Assuming this is your evaluation function
 import os  # For handling file system paths and directories
-from ingest_transform import store_model_path_in_postgresql  # Function to save model path in PostgreSQL
-from ingest_transform_couchdb import store_model_path_in_couchdb  # Function to save model path in CouchDB
 
 # Set image dimensions
 img_height, img_width = 150, 150  # Image dimensions
@@ -78,7 +74,7 @@ class BirdClassificationCNN(nn.Module):
         return x  # Return model predictions
 
 # Function to train the model
-def train_model(train_loader, val_loader, epochs, database_choice):
+def train_model(train_loader, val_loader, epochs):
     # Initialize model, loss function, and optimizer
     model = BirdClassificationCNN(num_classes=25)  # Instantiate the CNN model
     criterion = nn.CrossEntropyLoss()  # Cross-entropy loss for classification
@@ -112,11 +108,6 @@ def train_model(train_loader, val_loader, epochs, database_choice):
     os.makedirs(os.path.dirname(save_path), exist_ok=True)  # Create directory if not exists
     torch.save(model.state_dict(), save_path)  # Save the model's state dictionary
 
-    # Store model path in specified database
-    if database_choice == "PostgreSQL":
-        store_model_path_in_postgresql(save_path)  # Save path in PostgreSQL
-    elif database_choice == "CouchDB":
-        store_model_path_in_couchdb(save_path)  # Save path in CouchDB
     print(f'Model saved at {save_path}')  # Confirm model saving
 
     return model, training_report  # Return the trained model and training report
