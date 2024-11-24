@@ -10,13 +10,7 @@
             # Unit test: Pass
             # Integration test: Pass
      
-    # Description: Handles PostgreSQL database operations and image preprocessing.
-    # Features:
-        # - PostgreSQL database connection and operations
-        # - Image preprocessing pipeline
-        # - Data path storage and retrieval
-        # Database Integration:
-            # Postgres: Yes
+    # Description: This script handles image preprocessing.
 
 # CODE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
