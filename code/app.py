@@ -49,14 +49,14 @@ st.divider()  # Adding a horizontal divider
 
 # Creating tabs for different functionalities of the app
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Model Config", "Model Training", "Model Evaluation", "Model Prediction", "Model Flow", "About"])  
-
+DEFAULT_PATH = r'data\master'
 
 # First tab: Image Folder Path Storage
 with tab1:
     st.title("Image Folder Path Configuration")
 
     # Input field for image directory path
-    data_path = st.text_input("Enter the path to the folder containing images")
+    data_path = st.text_input("Enter the path to the folder containing images", value = DEFAULT_PATH)
 
     if os.path.exists(data_path):
         file_list = [os.path.join(dp, f) for dp, dn, filenames in os.walk(data_path) for f in filenames]
