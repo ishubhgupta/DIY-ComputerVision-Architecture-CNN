@@ -113,6 +113,8 @@ The dataset contains features related to various bird species, including:
    a. Model Configuration (Tab 1):
       - Enter dataset path in "Image Folder Path" field
         - Example- `Data/Master/Dataset`
+      - Enter the path where you want to save models
+        - Example- `code/saved_model`
 
       - Click "Store Data Path"
 

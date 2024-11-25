@@ -31,14 +31,15 @@ from train import BirdClassificationCNN  # Import custom CNN model
 from ingest_transform import preprocess  # Import preprocessing function
 
 # Function to load the selected model based on user choice
-def load_model(model_choice):
+def load_model(model_choice, model_save_path):
     # Check if the user wants to load the self-trained CNN model
     if model_choice == "Self-trained CNN":
         # Instantiate the self-trained CNN model with 25 output classes
         model = BirdClassificationCNN(num_classes=25)
         
         # Load the model weights from a saved file
-        model.load_state_dict(torch.load('code/saved_model/bird_classification_cnn.pth'))
+        model_path = os.path.join(model_save_path, 'bird_classification_cnn.pth')
+        model.load_state_dict(torch.load(model_path))
     
     # If the user selects the pretrained ResNet model
     elif model_choice == "Pretrained ResNet":
@@ -49,7 +50,8 @@ def load_model(model_choice):
         model.fc = torch.nn.Linear(model.fc.in_features, 25)
         
         # Load custom pretrained weights for the ResNet model
-        pretrained_dict = torch.load('code/saved_model/pretrained_resnet.pth')
+        pretrained_path = os.path.join(model_save_path, 'pretrained_resnet.pth')
+        pretrained_dict = torch.load(pretrained_path)
         
         # Get the current model's state dictionary
         model_dict = model.state_dict()
@@ -81,9 +83,9 @@ def predict_image_class(model, img_tensor, class_labels):
 
 
 # Main function to classify an uploaded image
-def classify(image, model_choice):
+def classify(image, model_choice, model_save_path):
     # Load the model based on the selected model choice
-    model = load_model(model_choice)
+    model = load_model(model_choice, model_save_path)
 
     # Preprocess the input image, which involves resizing, converting to tensor, and normalizing
     image_tensor = preprocess(image)

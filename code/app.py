@@ -53,23 +53,36 @@ DEFAULT_PATH = r'data\master'
 
 # First tab: Image Folder Path Storage
 with tab1:
-    st.title("Image Folder Path Configuration")
-
-    # Input field for image directory path
-    data_path = st.text_input("Enter the path to the folder containing images", value = DEFAULT_PATH)
-
-    if os.path.exists(data_path):
+    st.title("Configuration")
+    
+    # Data path input
+    data_path = st.text_input("Enter the path to the folder containing images", value=DEFAULT_PATH)
+    
+    # Model save path input
+    default_model_path = "saved_model"
+    model_save_path = st.text_input("Enter the path where you want to save models", value=default_model_path)
+    
+    paths_valid = True
+    if not os.path.exists(data_path):
+        st.error("The specified image path does not exist.")
+        paths_valid = False
+    
+    try:
+        os.makedirs(model_save_path, exist_ok=True)
+    except Exception as e:
+        st.error(f"Could not create model directory: {str(e)}")
+        paths_valid = False
+    
+    if paths_valid:
         file_list = [os.path.join(dp, f) for dp, dn, filenames in os.walk(data_path) for f in filenames]
         image_count = sum(1 for file_name in file_list if file_name.lower().endswith(('.jpeg', '.jpg')))
         
         st.write(f"Number of images found: {image_count}")
         st.write(f"Images found in: {data_path}")
         
-        if st.button("Confirm Path"):
-            st.success("Path configuration saved successfully!")
-    else:
-        st.write("The specified path does not exist. Please enter a valid path.")
-
+        if st.button("Confirm Paths"):
+            st.session_state['model_save_path'] = model_save_path
+            st.success("Paths configured successfully!")
 
 # Importing additional functionalities related to ResNet
 import streamlit as st  # Streamlit for building the web app
@@ -101,8 +114,9 @@ with tab2:
             # Use PostgreSQL or CouchDB to retrieve the path where images are stored
             train_loader, val_loader = data_load(data_path)
             
+            model_save_path = st.session_state.get('model_save_path', 'saved_model')
             # Training the model with the loaded data, number of epochs, and database choice
-            model, training_report = train_model(train_loader, val_loader, epochs)
+            model, training_report = train_model(train_loader, val_loader, epochs, model_save_path)
             
             # Validating the model's performance on the validation dataset
             accuracy = validate_model(model, val_loader)
@@ -132,8 +146,9 @@ with tab2:
         # Displaying status message while loading the model
         with st.status("Loading pretrained model..."):
             try:
+                model_save_path = st.session_state.get('model_save_path', 'saved_model')
                 # Calling the function to create and save the pretrained ResNet model
-                model = create_pretrained_resnet(num_classes)
+                model = create_pretrained_resnet(num_classes, model_save_path)
                 # Success message once the model is loaded
                 st.success("Pretrained ResNet model loaded successfully.")
             except Exception as e:
@@ -153,8 +168,9 @@ with tab3:
     st.markdown(f"<h3 style='text-align: center; color: white;'> Classification Report </h3>", unsafe_allow_html=True)
 
     try:
+        model_save_path = st.session_state.get('model_save_path', 'saved_model')
         # Loading the trained model from a specified file path
-        model_path = r"code\saved_model\bird_classification_cnn.pth"  # Path to the saved model file
+        model_path = os.path.join(model_save_path, "bird_classification_cnn.pth")  # Path to the saved model file
         st.write(f"Loading model from {model_path}")  # Debug message: Print the model path being loaded
         
         # Call the function to load the model
@@ -199,8 +215,9 @@ with tab4:
         # If an image is uploaded, open it using PIL
         image = Image.open(uploaded_file)  # Open the uploaded image file
         
+        model_save_path = st.session_state.get('model_save_path', 'saved_model')
         # Perform classification using the selected model and the uploaded image
-        predicted_class = classify(uploaded_file, model_choice)  # Call the classify function to get the prediction
+        predicted_class = classify(uploaded_file, model_choice, model_save_path)  # Call the classify function to get the prediction
         st.write(f"Predicted Class: {predicted_class}")  # Display the predicted class to the user
         
         # Show the uploaded image with an improved caption

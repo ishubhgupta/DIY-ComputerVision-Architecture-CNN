@@ -74,7 +74,7 @@ class BirdClassificationCNN(nn.Module):
         return x  # Return model predictions
 
 # Function to train the model
-def train_model(train_loader, val_loader, epochs):
+def train_model(train_loader, val_loader, epochs, model_save_path):
     # Initialize model, loss function, and optimizer
     model = BirdClassificationCNN(num_classes=25)  # Instantiate the CNN model
     criterion = nn.CrossEntropyLoss()  # Cross-entropy loss for classification
@@ -103,12 +103,11 @@ def train_model(train_loader, val_loader, epochs):
         # Validate the model after each epoch
         validate_model(model, val_loader)  # Call validation function
 
-    # Define path to save the trained model
-    save_path = 'code/saved_model/bird_classification_cnn.pth'
-    os.makedirs(os.path.dirname(save_path), exist_ok=True)  # Create directory if not exists
-    torch.save(model.state_dict(), save_path)  # Save the model's state dictionary
-
-    print(f'Model saved at {save_path}')  # Confirm model saving
+    # Save model with user-defined path
+    model_file = os.path.join(model_save_path, 'bird_classification_cnn.pth')
+    os.makedirs(os.path.dirname(model_file), exist_ok=True)
+    torch.save(model.state_dict(), model_file)
+    print(f'Model saved at {model_file}')
 
     return model, training_report  # Return the trained model and training report
 
